@@ -1,6 +1,6 @@
 This repository is a tutorial on how to build a Fast API from scratch: https://fastapi.tiangolo.com/tutorial/
 
-# Installation and Set Up
+# 1. Installation and Set Up
 
 ## Install Pip
 Make sure you have pip installed and upgraded to the latest version:
@@ -16,7 +16,6 @@ Create a virtual enviroment
 ```
 virtualenv fast-api
 ```
-Activate the virtual enviroment
 
 ## Activate virtual enviroment
 ### MacOS / Linux
@@ -42,6 +41,28 @@ or you can install it directly from the requirements.txt file
 ```
 pip install -r requirements.txt
 ```
+
+# 2. Create a hello world app
+In the main.py file: 
+```
+from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+```
+
+In order to run the server, we have to run the following command from terminal
+```
+uvicorn main:app --reload
+```
+
+where:
+* main: refers to the python file
+* app: refers to the FastAPI instance init in main.py
 
 
 
