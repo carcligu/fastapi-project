@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from typing import Optional
+from pydantic import BaseModel
+
+
 
 app = FastAPI()
 
@@ -28,3 +31,16 @@ async def show(id: int):
 async def comments(id: int):
     # fetch comments of project with id = id
     return {'data': {'1', '2'}}
+
+
+# POST METHODS
+class Project(BaseModel):
+    id: int
+    title: str
+    description: Optional[str] = None
+    url: Optional[str]
+    technologies: Optional[list]
+
+@app.post('/project')
+async def create_project(request: Project):
+    return {'data': f'Project is created with id: {request.id}', 'response': request}
