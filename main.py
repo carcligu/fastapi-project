@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from typing import Optional
 from pydantic import BaseModel
-
+import uvicorn
 
 
 app = FastAPI()
@@ -43,4 +43,8 @@ class Project(BaseModel):
 
 @app.post('/project')
 async def create_project(request: Project):
-    return {'data': f'Project is created with id: {request.id}', 'response': request}
+    return {'data': f'Project is created with id: {request.id}', 'request': request}
+
+
+if __name__ == '__main__':
+    uvicorn.run(app, host="127.0.0.1", port=9001)
