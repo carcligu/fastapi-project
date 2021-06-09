@@ -20,7 +20,7 @@ def get_db():
     finally:
         db.close()
 
-
+# POST METHODS -----------------------------------------------------------------------------------------------------------------
 @app.post('/project', status_code=status.HTTP_201_CREATED)
 def post_project(request: schemas.Project, db: Session = Depends(get_db)):
     new_project = models.Project(
@@ -32,15 +32,29 @@ def post_project(request: schemas.Project, db: Session = Depends(get_db)):
     db.refresh(new_project)
     return new_project
 
-
+# DELETE METHODS -----------------------------------------------------------------------------------------------------------------
 @app.delete('/project/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_project(id, db: Session = Depends(get_db)):
-    project = db.query(models.Project).filter(models.Project.id == id).delete(synchronize_session=False)
+    project = db.query(models.Project).filter(models.Project.id == id)
+    if not project.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Project with id {id} not found')
+    project.delete(synchronize_session=False)
     db.commit()
-    #db.refresh()
-    return {'detail': f'Project with id {id} has been deleted'}
-    
+    return 'done'
 
+
+#PUT METHODS -----------------------------------------------------------------------------------------------------------------
+@app.put('/project/{id}', status_code=status.HTTP_202_ACCEPTED)
+def update(id, request: schemas.Project, db: Session = Depends(get_db)):
+    project = db.query(models.Project).filter(models.Project.id == id)
+    if not project.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Project with id {id} not found')
+    project.update(request.dict())
+    db.commit()
+    return request
+
+
+# GET METHODS -----------------------------------------------------------------------------------------------------------------
 @app.get('/project')
 def get_projects(db: Session = Depends(get_db)):
     projects = db.query(models.Project).all()
