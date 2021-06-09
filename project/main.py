@@ -1,5 +1,5 @@
 from main import Project
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, status, Response, HTTPException
 from sqlalchemy import engine
 from . import schemas
 from . import models
@@ -21,8 +21,8 @@ def get_db():
         db.close()
 
 
-@app.post('/project')
-def create(request: schemas.Project, db: Session = Depends(get_db)):
+@app.post('/project', status_code=status.HTTP_201_CREATED)
+def post_project(request: schemas.Project, db: Session = Depends(get_db)):
     new_project = models.Project(
                         title=request.title,
                         description=request.description
@@ -34,12 +34,14 @@ def create(request: schemas.Project, db: Session = Depends(get_db)):
 
 
 @app.get('/project')
-def all_projects(db: Session = Depends(get_db)):
+def get_projects(db: Session = Depends(get_db)):
     projects = db.query(models.Project).all()
     return projects
 
 
-@app.get('/project/{id}')
-def get_project(id, db: Session = Depends(get_db)):
+@app.get('/project/{id}', status_code=200)
+def get_project(id, response: Response, db: Session = Depends(get_db)):
     project = db.query(models.Project).filter(models.Project.id == id).first()
+    if not project:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Project with the id {id} is not available')
     return project
