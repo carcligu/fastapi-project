@@ -5,6 +5,7 @@ from . import schemas
 from . import models
 from . import database
 from sqlalchemy.orm import Session
+from typing import List
 
 
 app = FastAPI()
@@ -37,6 +38,7 @@ def post_project(request: schemas.Project, db: Session = Depends(get_db)):
     db.refresh(new_project)
     return new_project
 
+
 # DELETE METHODS -----------------------------------------------------------------------------------------------------------------
 @app.delete('/project/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_project(id, db: Session = Depends(get_db)):
@@ -60,13 +62,13 @@ def update(id, request: schemas.Project, db: Session = Depends(get_db)):
 
 
 # GET METHODS -----------------------------------------------------------------------------------------------------------------
-@app.get('/project')
+@app.get('/project', response_model=List[schemas.ShowProject])
 def get_projects(db: Session = Depends(get_db)):
     projects = db.query(models.Project).all()
     return projects
 
 
-@app.get('/project/{id}', status_code=200)
+@app.get('/project/{id}', status_code=200, response_model=schemas.ShowProject)
 def get_project(id, response: Response, db: Session = Depends(get_db)):
     project = db.query(models.Project).filter(models.Project.id == id).first()
     if not project:

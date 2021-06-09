@@ -1,3 +1,4 @@
+from project.database import Base
 from pydantic import BaseModel
 from typing import Optional
 
@@ -16,3 +17,11 @@ class Project(BaseModel):
                 "technologies": "Python"
             }
         }
+
+class ShowProject(BaseModel):
+    title: str
+    description: str
+    url: Optional[str] = None
+    technologies: Optional[str] = None
+    class Config():
+        orm_mode = True
