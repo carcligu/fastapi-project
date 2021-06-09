@@ -24,6 +24,7 @@ class ShowProject(BaseModel):
     description: str
     url: Optional[str] = None
     technologies: Optional[str] = None
+    
     class Config():
         orm_mode = True
 
@@ -32,3 +33,10 @@ class User(BaseModel):
     name: str
     email: str
     password: str
+
+class ShowUser(BaseModel):
+    name: str
+    email: str
+
+    class Config():
+        orm_mode = True
