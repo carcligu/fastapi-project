@@ -9,4 +9,3 @@ class Project(database.Base):
     description = Column(String)
     url = Column(String)
     technologies = Column(String)
-

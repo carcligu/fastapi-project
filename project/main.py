@@ -6,7 +6,6 @@ from . import models
 from . import database
 from sqlalchemy.orm import Session
 
-import project
 
 app = FastAPI()
 
@@ -23,9 +22,15 @@ def get_db():
 # POST METHODS -----------------------------------------------------------------------------------------------------------------
 @app.post('/project', status_code=status.HTTP_201_CREATED)
 def post_project(request: schemas.Project, db: Session = Depends(get_db)):
+    print(f"This is the title: {request.title}")
+    print(f"This is the description: {request.description}")
+    print(f"This is the technology: {request.technologies}")
+    print(f"This is the url: {request.url}")
     new_project = models.Project(
                         title=request.title,
-                        description=request.description
+                        description=request.description,
+                        url=request.url,
+                        technologies=request.technologies,
                     )
     db.add(new_project)
     db.commit()
@@ -40,7 +45,7 @@ def delete_project(id, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Project with id {id} not found')
     project.delete(synchronize_session=False)
     db.commit()
-    return 'done'
+    return {f'detail': "Project with id {id} deleted"}
 
 
 #PUT METHODS -----------------------------------------------------------------------------------------------------------------
