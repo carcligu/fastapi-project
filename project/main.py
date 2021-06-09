@@ -29,9 +29,17 @@ def post_project(request: schemas.Project, db: Session = Depends(get_db)):
                     )
     db.add(new_project)
     db.commit()
-    db.refresh
+    db.refresh(new_project)
     return new_project
 
+
+@app.delete('/project/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_project(id, db: Session = Depends(get_db)):
+    project = db.query(models.Project).filter(models.Project.id == id).delete(synchronize_session=False)
+    db.commit()
+    #db.refresh()
+    return {'detail': f'Project with id {id} has been deleted'}
+    
 
 @app.get('/project')
 def get_projects(db: Session = Depends(get_db)):
