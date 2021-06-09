@@ -21,7 +21,7 @@ def get_db():
 
 
 # POST METHODS -----------------------------------------------------------------------------------------------------------------
-@app.post('/project', status_code=status.HTTP_201_CREATED)
+@app.post('/project', status_code=status.HTTP_201_CREATED, tags=['projects'])
 def post_project(request: schemas.Project, db: Session = Depends(get_db)):
     new_project = models.Project(
                         title=request.title,
@@ -35,7 +35,7 @@ def post_project(request: schemas.Project, db: Session = Depends(get_db)):
     return new_project.__dict__
 
 
-@app.post('/user', response_model=schemas.ShowUser)
+@app.post('/user', response_model=schemas.ShowUser, tags=['users'])
 def create_user(request: schemas.User, db: Session = Depends(get_db)):
     new_user = models.User(
                     name=request.name,
@@ -49,7 +49,7 @@ def create_user(request: schemas.User, db: Session = Depends(get_db)):
 
 
 # DELETE METHODS -----------------------------------------------------------------------------------------------------------------
-@app.delete('/project/{id}', status_code=status.HTTP_204_NO_CONTENT)
+@app.delete('/project/{id}', status_code=status.HTTP_204_NO_CONTENT, tags=['projects'])
 def delete_project(id, db: Session = Depends(get_db)):
     project = db.query(models.Project).filter(models.Project.id == id)
     if not project.first():
@@ -60,7 +60,7 @@ def delete_project(id, db: Session = Depends(get_db)):
 
 
 #PUT METHODS -----------------------------------------------------------------------------------------------------------------
-@app.put('/project/{id}', status_code=status.HTTP_202_ACCEPTED)
+@app.put('/project/{id}', status_code=status.HTTP_202_ACCEPTED, tags=['projects'])
 def update(id, request: schemas.Project, db: Session = Depends(get_db)):
     project = db.query(models.Project).filter(models.Project.id == id)
     if not project.first():
@@ -71,20 +71,20 @@ def update(id, request: schemas.Project, db: Session = Depends(get_db)):
 
 
 # GET METHODS -----------------------------------------------------------------------------------------------------------------
-@app.get('/project', response_model=List[schemas.ShowProject])
+@app.get('/project', response_model=List[schemas.ShowProject], tags=['projects'])
 def get_projects(db: Session = Depends(get_db)):
     projects = db.query(models.Project).all()
     return projects
 
 
-@app.get('/project/{id}', status_code=200, response_model=schemas.ShowProject)
+@app.get('/project/{id}', status_code=200, response_model=schemas.ShowProject, tags=['projects'])
 def get_project(id: int, response: Response, db: Session = Depends(get_db)):
     project = db.query(models.Project).filter(models.Project.id == id).first()
     if not project:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Project with the id {id} is not available')
     return project
 
-@app.get('/user/{id}', response_model=schemas.ShowUser)
+@app.get('/user/{id}', response_model=schemas.ShowUser, tags=['users'])
 def get_user(id: int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
     if not user:
