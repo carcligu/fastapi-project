@@ -1,11 +1,10 @@
 from main import Project
 from fastapi import FastAPI, Depends, status, Response, HTTPException
 from sqlalchemy import engine
-from . import schemas
-from . import models
-from . import database
+from . import schemas, models, database
 from sqlalchemy.orm import Session
 from typing import List
+from .hashing import Hash
 
 
 app = FastAPI()
@@ -19,6 +18,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 # POST METHODS -----------------------------------------------------------------------------------------------------------------
 @app.post('/project', status_code=status.HTTP_201_CREATED)
@@ -36,11 +36,11 @@ def post_project(request: schemas.Project, db: Session = Depends(get_db)):
 
 
 @app.post('/user')
-def create_user(request: schemas.User, db: Session = Depends(get_db)):
+def create_user(request: schemas.User, db: Session = Depends(get_db), ):
     new_user = models.User(
                     name=request.name,
                     email=request.email,
-                    password=request.password,
+                    password=Hash.bcrypt(request.password),
     )
     db.add(new_user)
     db.commit()
