@@ -23,10 +23,6 @@ def get_db():
 # POST METHODS -----------------------------------------------------------------------------------------------------------------
 @app.post('/project', status_code=status.HTTP_201_CREATED)
 def post_project(request: schemas.Project, db: Session = Depends(get_db)):
-    print(f"This is the title: {request.title}")
-    print(f"This is the description: {request.description}")
-    print(f"This is the technology: {request.technologies}")
-    print(f"This is the url: {request.url}")
     new_project = models.Project(
                         title=request.title,
                         description=request.description,
@@ -36,7 +32,20 @@ def post_project(request: schemas.Project, db: Session = Depends(get_db)):
     db.add(new_project)
     db.commit()
     db.refresh(new_project)
-    return new_project
+    return new_project.__dict__
+
+
+@app.post('/user')
+def create_user(request: schemas.User, db: Session = Depends(get_db)):
+    new_user = models.User(
+                    name=request.name,
+                    email=request.email,
+                    password=request.password,
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user.__dict__
 
 
 # DELETE METHODS -----------------------------------------------------------------------------------------------------------------

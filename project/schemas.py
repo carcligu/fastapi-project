@@ -18,6 +18,7 @@ class Project(BaseModel):
             }
         }
 
+
 class ShowProject(BaseModel):
     title: str
     description: str
@@ -25,3 +26,9 @@ class ShowProject(BaseModel):
     technologies: Optional[str] = None
     class Config():
         orm_mode = True
+
+
+class User(BaseModel):
+    name: str
+    email: str
+    password: str
